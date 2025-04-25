@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>View Click Logs</title>
-
-  <!-- DataTables CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
-
+  <meta charset="UTF-8">
+  <title>Click Logs</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    h2::before {
+      content: url('https://cdn-icons-png.flaticon.com/128/1827/1827371.png');
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
     }
     table {
       width: 100%;
@@ -19,8 +25,8 @@
   </style>
 </head>
 <body>
-  <h2>📊 Click Logs</h2>
-  <table id="clickTable" class="display">
+  <h2>Click Logs</h2>
+  <table id="clickLogs" class="display">
     <thead>
       <tr>
         <th>Product ID</th>
@@ -30,32 +36,28 @@
         <th>Timestamp</th>
       </tr>
     </thead>
-    <tbody></tbody>
   </table>
 
-  <!-- jQuery + DataTables -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
   <script>
-    fetch("https://muataiday-api.onrender.com/api/click/")
-      .then(response => response.json())
-      .then(data => {
-        const rows = data.map(item => `
-          <tr>
-            <td>${item.product_id || ''}</td>
-            <td>${item.source || ''}</td>
-            <td>${item.device || ''}</td>
-            <td>${item.ip || ''}</td>
-            <td>${item.timestamp || ''}</td>
-          </tr>
-        `).join('');
-        document.querySelector("#clickTable tbody").innerHTML = rows;
-        $('#clickTable').DataTable();
-      })
-      .catch(error => {
-        console.error("Failed to fetch click data:", error);
-      });
+    $(document).ready(function () {
+      fetch('/api/click/')
+        .then(res => res.json())
+        .then(data => {
+          $('#clickLogs').DataTable({
+            data: data,
+            columns: [
+              { data: 'product_id' },
+              { data: 'source' },
+              { data: 'device', defaultContent: '' },
+              { data: 'ip', defaultContent: '' },
+              { data: 'timestamp' }
+            ]
+          });
+        })
+        .catch(error => console.error('Error loading data:', error));
+    });
   </script>
 </body>
 </html>
