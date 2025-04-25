@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Log Clicks</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+</head>
+<body style="font-family:sans-serif; padding: 20px;">
+  <h2>Lịch sử click sản phẩm</h2>
+  <table id="clickTable" class="display" style="width:100%">
+    <thead>
+      <tr>
+        <th>Thời gian</th>
+        <th>Product ID</th>
+        <th>Source</th>
+        <th>Device</th>
+        <th>IP</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    fetch("/api/click/")
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          data.forEach(row => {
+            $('#clickTable tbody').append(`
+              <tr>
+                <td>${row.timestamp || ''}</td>
+                <td>${row.product_id || ''}</td>
+                <td>${row.source || ''}</td>
+                <td>${row.device || ''}</td>
+                <td>${row.IP || ''}</td>
+              </tr>
+            `);
+          });
+          $('#clickTable').DataTable();
+        } else {
+          alert("Dữ liệu trả về không đúng định dạng!");
+        }
+      });
+  </script>
+</body>
+</html>
